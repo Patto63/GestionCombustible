@@ -5,6 +5,8 @@ EXPOSE 8080
 FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 WORKDIR /src
 COPY ["src/ApiGateway.API/ApiGateway.API.csproj", "src/ApiGateway.API/"]
+COPY ["src/ApiGateway.Application/ApiGateway.Application.csproj", "src/ApiGateway.Application/"]
+COPY ["src/ApiGateway.Infrastructure/ApiGateway.Infrastructure.csproj", "src/ApiGateway.Infrastructure/"]
 RUN dotnet restore "src/ApiGateway.API/ApiGateway.API.csproj"
 COPY . .
 WORKDIR "/src/src/ApiGateway.API"

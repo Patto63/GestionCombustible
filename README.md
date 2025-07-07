@@ -1,16 +1,21 @@
 # GestionCombustible
 
-Este repositorio contiene los microservicios de autenticación y gestión de vehículos para el proyecto *GestionCombustible*. Ahora se añade un API Gateway sencillo basado en **YARP** que permite exponer los servicios de forma unificada para un front-end.
+Este repositorio contiene los microservicios de autenticación y gestión de vehículos para el proyecto *GestionCombustible*. Ahora se añade un API Gateway REST que se apoya en **YARP** para exponer los servicios de forma unificada para un front-end.
+
 
 ## Microservicios existentes
 - **AuthServiceEcoF**: Servicio de autenticación (puerto 8081/8080).
 - **VehicleServiceEcoF**: Servicio de gestión de vehículos (puerto 8082).
 
 ## Nuevo API Gateway
-El directorio `ApiGatewayEcoF` contiene un microservicio adicional construido con .NET 9 y el paquete `Yarp.ReverseProxy`. El gateway expone:
+El directorio `ApiGatewayEcoF` contiene un microservicio adicional construido con .NET 9. Se aplica una separación en capas (API, Application e Infrastructure) para mantener la arquitectura limpia. El gateway genera clientes gRPC a partir de los **protos** y publica un endpoint REST por cada operación expuesta por los microservicios. Algunos ejemplos:
 
-- `/auth/*` → redirige a `AuthServiceEcoF`.
-- `/vehicle/*` → redirige a `VehicleServiceEcoF`.
+- `POST /auth/login` para el inicio de sesión.
+- `GET /auth/usuarios` listado de usuarios.
+- `POST /vehicle/cambiar-estado` cambio de estado de un vehículo.
+- `GET /vehicle/activos` listado de vehículos activos.
+
+
 
 El gateway escucha en el puerto **8085** (configurable en `docker-compose.yml`).
 

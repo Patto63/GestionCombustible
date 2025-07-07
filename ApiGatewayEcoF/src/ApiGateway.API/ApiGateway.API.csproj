@@ -5,9 +5,12 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
-
   <ItemGroup>
     <PackageReference Include="Yarp.ReverseProxy" Version="2.2.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="../ApiGateway.Application/ApiGateway.Application.csproj" />
+    <ProjectReference Include="../ApiGateway.Infrastructure/ApiGateway.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>
