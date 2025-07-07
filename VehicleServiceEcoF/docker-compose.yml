@@ -1,0 +1,50 @@
+services:
+  vehicle-db:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: vehicle_db
+    environment:
+      SA_PASSWORD: ${SA_PASSWORD}
+      ACCEPT_EULA: "Y"
+      MSSQL_PID: "Express"
+    ports:
+      - "1435:1433"
+    networks:
+      - vehicle-network
+    volumes:
+      - vehicle_db_data:/var/opt/mssql
+    restart: unless-stopped
+
+  vehicle-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: vehicle_service
+    environment:
+      ConnectionStrings__DefaultConnection: "Server=vehicle-db,1433;Database=${DB_NAME};User Id=sa;Password=${SA_PASSWORD};TrustServerCertificate=true;Connection Timeout=30;"
+      ConnectionStrings__AuthService: "http://auth_service:8080"
+      
+      ASPNETCORE_ENVIRONMENT: ${ASPNETCORE_ENVIRONMENT}
+      ASPNETCORE_URLS: "http://+:8082"
+      
+      # JWT Configuration
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_ISSUER: ${JWT_ISSUER}
+      JWT_AUDIENCE: ${JWT_AUDIENCE}
+      JWT_EXPIRATION_MINUTES: ${JWT_EXPIRATION_MINUTES}
+      
+      VEHICLE_SERVICE_NAME: ${VEHICLE_SERVICE_NAME}
+      
+    ports:
+      - "8082:8082"
+    depends_on:
+      - vehicle-db
+    networks:
+      - vehicle-network
+    restart: unless-stopped
+
+networks:
+  vehicle-network:
+    driver: bridge
+
+volumes:
+  vehicle_db_data:

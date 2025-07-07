@@ -1,0 +1,291 @@
+syntax = "proto3";
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/empty.proto";
+
+option csharp_namespace = "VehicleService.Protos";
+
+package vehicle;
+
+// Servicio principal de vehículos
+service VehicleService {
+  // Operaciones CRUD básicas
+  rpc CrearVehiculo(CrearVehiculoRequest) returns (VehiculoResponse);
+  rpc ObtenerVehiculoPorId(ObtenerVehiculoPorIdRequest) returns (VehiculoResponse);
+  rpc ObtenerVehiculoDetalle(ObtenerVehiculoPorIdRequest) returns (VehiculoDetalleResponse);
+  rpc ObtenerTodosVehiculos(google.protobuf.Empty) returns (VehiculosResponse);
+  rpc ActualizarVehiculo(ActualizarVehiculoRequest) returns (OperationResponse);
+  rpc EliminarVehiculo(EliminarVehiculoRequest) returns (OperationResponse);
+
+  // Consultas específicas
+  rpc ObtenerVehiculoPorCodigo(ObtenerVehiculoPorCodigoRequest) returns (VehiculoResponse);
+  rpc ObtenerVehiculoPorPlaca(ObtenerVehiculoPorPlacaRequest) returns (VehiculoResponse);
+  rpc ObtenerVehiculosPorTipoMaquinaria(ObtenerVehiculosPorTipoMaquinariaRequest) returns (VehiculosResponse);
+  rpc ObtenerVehiculosPorEstado(ObtenerVehiculosPorEstadoRequest) returns (VehiculosResponse);
+  rpc ObtenerVehiculosFiltrados(FiltroVehiculosRequest) returns (VehiculosPagedResponse);
+
+  // Operaciones de estado
+  rpc CambiarEstadoVehiculo(CambiarEstadoVehiculoRequest) returns (OperationResponse);
+  rpc ActivarVehiculo(ActivarVehiculoRequest) returns (OperationResponse);
+  rpc EnviarAMantenimiento(EnviarAMantenimientoRequest) returns (OperationResponse);
+  rpc EnviarAReparacion(EnviarAReparacionRequest) returns (OperationResponse);
+  rpc InactivarVehiculo(InactivarVehiculoRequest) returns (OperationResponse);
+  rpc ReservarVehiculo(ReservarVehiculoRequest) returns (OperationResponse);
+  rpc LiberarReserva(LiberarReservaRequest) returns (OperationResponse);
+
+  // Operaciones de odómetro y mantenimiento
+  rpc ActualizarOdometro(ActualizarOdometroRequest) returns (OperationResponse);
+  rpc RegistrarMantenimiento(RegistrarMantenimientoRequest) returns (OperationResponse);
+
+  // Consultas especializadas
+  rpc ObtenerVehiculosActivos(google.protobuf.Empty) returns (VehiculosResponse);
+  rpc ObtenerVehiculosDisponibles(google.protobuf.Empty) returns (VehiculosResponse);
+  rpc ObtenerVehiculosConMantenimientoVencido(google.protobuf.Empty) returns (VehiculosResponse);
+
+  // Validaciones
+  rpc ExisteVehiculoConCodigo(ExisteVehiculoConCodigoRequest) returns (ExisteVehiculoResponse);
+  rpc ExisteVehiculoConPlaca(ExisteVehiculoConPlacaRequest) returns (ExisteVehiculoResponse);
+}
+
+// Enumeraciones
+enum TipoMaquinaria {
+  TIPO_MAQUINARIA_UNSPECIFIED = 0;
+  LIGERA = 1;
+  PESADA = 2;
+}
+
+enum EstadoVehiculo {
+  ESTADO_VEHICULO_UNSPECIFIED = 0;
+  ACTIVO = 1;
+  MANTENIMIENTO = 2;
+  INACTIVO = 3;
+  REPARACION = 4;
+  RESERVADO = 5;
+}
+
+// DTOs principales
+message VehiculoDTO {
+  int32 vehiculo_id = 1;
+  string codigo = 2;
+  int32 tipo_id = 3;
+  int32 modelo_id = 4;
+  string placa = 5;
+  string tipo_maquinaria = 6;
+  int32 ano_fabricacion = 7;
+  google.protobuf.Timestamp fecha_compra = 8;
+  double odometro_inicial = 9;
+  double odometro_actual = 10;
+  double capacidad_combustible = 11;
+  string capacidad_motor = 12;
+  string estado = 13;
+  google.protobuf.Timestamp fecha_ultimo_mantenimiento = 14;
+  google.protobuf.Timestamp fecha_proximo_mantenimiento = 15;
+  google.protobuf.Timestamp creado_en = 16;
+  google.protobuf.Timestamp actualizado_en = 17;
+}
+
+message VehiculoDetalleDTO {
+  // Campos heredados de VehiculoDTO
+  int32 vehiculo_id = 1;
+  string codigo = 2;
+  int32 tipo_id = 3;
+  int32 modelo_id = 4;
+  string placa = 5;
+  string tipo_maquinaria = 6;
+  int32 ano_fabricacion = 7;
+  google.protobuf.Timestamp fecha_compra = 8;
+  double odometro_inicial = 9;
+  double odometro_actual = 10;
+  double capacidad_combustible = 11;
+  string capacidad_motor = 12;
+  string estado = 13;
+  google.protobuf.Timestamp fecha_ultimo_mantenimiento = 14;
+  google.protobuf.Timestamp fecha_proximo_mantenimiento = 15;
+  google.protobuf.Timestamp creado_en = 16;
+  google.protobuf.Timestamp actualizado_en = 17;
+
+  // Campos específicos de detalle
+  bool requiere_mantenimiento = 18;
+  bool mantenimiento_vencido = 19;
+  double kilometraje_recorrido = 20;
+  repeated EstadoOperacionalDTO historial_estados = 21;
+}
+
+message EstadoOperacionalDTO {
+  int32 estado_id = 1;
+  int32 vehiculo_id = 2;
+  string estado = 3;
+  google.protobuf.Timestamp fecha_inicio = 4;
+  google.protobuf.Timestamp fecha_fin = 5;
+  string motivo = 6;
+  string registrado_por = 7;
+  google.protobuf.Timestamp creado_en = 8;
+}
+
+// Mensajes de respuesta
+message VehiculoResponse {
+  bool exito = 1;
+  string mensaje = 2;
+  VehiculoDTO vehiculo = 3;
+}
+
+message VehiculoDetalleResponse {
+  bool exito = 1;
+  string mensaje = 2;
+  VehiculoDetalleDTO vehiculo = 3;
+}
+
+message VehiculosResponse {
+  bool exito = 1;
+  string mensaje = 2;
+  repeated VehiculoDTO vehiculos = 3;
+}
+
+message VehiculosPagedResponse {
+  bool exito = 1;
+  string mensaje = 2;
+  repeated VehiculoDTO vehiculos = 3;
+  int32 total_registros = 4;
+  int32 pagina_actual = 5;
+  int32 total_paginas = 6;
+  bool tiene_pagina_anterior = 7;
+  bool tiene_pagina_siguiente = 8;
+}
+
+message OperationResponse {
+  bool exito = 1;
+  string mensaje = 2;
+}
+
+message ExisteVehiculoResponse {
+  bool existe = 1;
+}
+
+// Mensajes de solicitud - Operaciones CRUD
+message CrearVehiculoRequest {
+  string codigo = 1;
+  int32 tipo_id = 2;
+  int32 modelo_id = 3;
+  string placa = 4;
+  int32 tipo_maquinaria = 5;
+  int32 ano_fabricacion = 6;
+  google.protobuf.Timestamp fecha_compra = 7;
+  double odometro_inicial = 8;
+  double capacidad_combustible = 9;
+  string capacidad_motor = 10;
+}
+
+message ObtenerVehiculoPorIdRequest {
+  int32 vehiculo_id = 1;
+}
+
+message ActualizarVehiculoRequest {
+  int32 vehiculo_id = 1;
+  string codigo = 2;
+  int32 tipo_id = 3;
+  int32 modelo_id = 4;
+  string placa = 5;
+  int32 tipo_maquinaria = 6;
+  int32 ano_fabricacion = 7;
+  google.protobuf.Timestamp fecha_compra = 8;
+  double capacidad_combustible = 9;
+  string capacidad_motor = 10;
+}
+
+message EliminarVehiculoRequest {
+  int32 vehiculo_id = 1;
+}
+
+// Mensajes de solicitud - Consultas específicas
+message ObtenerVehiculoPorCodigoRequest {
+  string codigo = 1;
+}
+
+message ObtenerVehiculoPorPlacaRequest {
+  string placa = 1;
+}
+
+message ObtenerVehiculosPorTipoMaquinariaRequest {
+  int32 tipo_maquinaria = 1;
+}
+
+message ObtenerVehiculosPorEstadoRequest {
+  EstadoVehiculo estado = 1;
+}
+
+message FiltroVehiculosRequest {
+  string codigo = 1;
+  string placa = 2;
+  int32 tipo_id = 3;
+  int32 modelo_id = 4;
+  int32 estado_vehiculo = 5;
+  int32 tipo_maquinaria = 6;
+  google.protobuf.Timestamp fecha_compra_desde = 7;
+  google.protobuf.Timestamp fecha_compra_hasta = 8;
+  bool requiere_mantenimiento = 9;
+  bool mantenimiento_vencido = 10;
+  int32 pagina = 11;
+  int32 tamano_pagina = 12;
+}
+
+// Mensajes de solicitud - Operaciones de estado
+message CambiarEstadoVehiculoRequest {
+  int32 vehiculo_id = 1;
+  int32 estado_vehiculo = 2;
+  string motivo = 3;
+  string registrado_por = 4;
+}
+
+message ActivarVehiculoRequest {
+  int32 vehiculo_id = 1;
+  string registrado_por = 2;
+}
+
+message EnviarAMantenimientoRequest {
+  int32 vehiculo_id = 1;
+  string motivo = 2;
+  string registrado_por = 3;
+}
+
+message EnviarAReparacionRequest {
+  int32 vehiculo_id = 1;
+  string motivo = 2;
+  string registrado_por = 3;
+}
+
+message InactivarVehiculoRequest {
+  int32 vehiculo_id = 1;
+  string motivo = 2;
+  string registrado_por = 3;
+}
+
+message ReservarVehiculoRequest {
+  int32 vehiculo_id = 1;
+  string motivo = 2;
+  string registrado_por = 3;
+}
+
+message LiberarReservaRequest {
+  int32 vehiculo_id = 1;
+  string registrado_por = 2;
+}
+
+// Mensajes de solicitud - Operaciones de odómetro y mantenimiento
+message ActualizarOdometroRequest {
+  int32 vehiculo_id = 1;
+  double nuevo_odometro = 2;
+}
+
+message RegistrarMantenimientoRequest {
+  int32 vehiculo_id = 1;
+  google.protobuf.Timestamp fecha_proximo_mantenimiento = 2;
+}
+
+// Mensajes de solicitud - Validaciones
+message ExisteVehiculoConCodigoRequest {
+  string codigo = 1;
+}
+
+message ExisteVehiculoConPlacaRequest {
+  string placa = 1;
+}

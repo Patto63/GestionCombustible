@@ -1,0 +1,85 @@
+﻿syntax = "proto3";
+
+import "google/protobuf/empty.proto";
+
+option csharp_namespace = "AuthService.Protos";
+package auth;
+
+// Mensaje para solicitar login
+message LoginRequest {
+  string correo = 1;
+  string contrasena = 2;
+}
+
+message LoginResponse {
+  bool exito = 1;
+  string mensaje = 2;
+  string token = 3;
+}
+
+// Mensaje para registrar un usuario 
+message RegisterRequest {
+  string NombreUsuario = 1;
+  string Correo = 2;
+  string Contrasena = 3;
+  string Nombre = 4;
+  string Apellido = 5;
+  int32 RolId = 6;
+}
+
+message RegisterResponse {
+  bool exito = 1;
+  string mensaje = 2;
+}
+
+message UsuarioDto {
+  int32 usuarioId = 1;
+  string nombre = 2;
+  string apellido = 3;
+  string correo = 4;
+  string nombreUsuario = 5;
+  bool estaActivo = 6;
+  repeated string roles = 7;
+}
+
+message ListarUsuariosResponse {
+  repeated UsuarioDto usuarios = 1;
+}
+message ListarUsuariosPorRolRequest {
+  int32 rol_id = 1;
+}
+
+message ListarUsuariosPorRolResponse {
+  repeated UsuarioDto usuarios = 1;
+}
+
+message ActualizarEstadoUsuarioRequest {
+  int32 usuario_id = 1;
+  bool nuevo_estado = 2;
+}
+
+message ActualizarEstadoUsuarioResponse {
+  bool exito = 1;
+  string mensaje = 2;
+}
+
+message EliminarUsuarioRequest {
+  int32 usuario_id = 1;
+}
+
+message EliminarUsuarioResponse {
+  bool exito = 1;
+  string mensaje = 2;
+}
+
+
+
+service AuthService {
+  rpc Login(LoginRequest) returns (LoginResponse);
+  rpc Register(RegisterRequest) returns (RegisterResponse);
+
+  rpc ListarUsuarios(google.protobuf.Empty) returns (ListarUsuariosResponse);
+  rpc ListarUsuariosPorRol(ListarUsuariosPorRolRequest) returns (ListarUsuariosPorRolResponse);
+  rpc ActualizarEstadoUsuario(ActualizarEstadoUsuarioRequest) returns (ActualizarEstadoUsuarioResponse);
+  rpc EliminarUsuario(EliminarUsuarioRequest) returns (EliminarUsuarioResponse);
+}

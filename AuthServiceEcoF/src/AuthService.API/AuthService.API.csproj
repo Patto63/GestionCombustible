@@ -1,0 +1,33 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Grpc.AspNetCore" Version="2.65.0" />
+		<PackageReference Include="Grpc.Tools" Version="2.65.0" PrivateAssets="All" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.0" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.0" />
+		<PackageReference Include="Microsoft.Extensions.Logging" Version="9.0.0" />
+
+		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
+
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Protobuf Include="Protos\auth.proto" GrpcServices="Server" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\AuthService.Application\AuthService.Application.csproj" />
+		<ProjectReference Include="..\AuthService.Infrastructure\AuthService.Infrastructure.csproj" />
+		<ProjectReference Include="..\AuthService.Persistence\AuthService.Persistence.csproj" />
+		<ProjectReference Include="..\AuthService.Domain\AuthService.Domain.csproj" />
+
+	</ItemGroup>
+
+</Project>

@@ -1,0 +1,35 @@
+﻿# Archivos temporales de Visual Studio
+.vs/
+*.user
+*.suo
+
+# Archivos compilados
+bin/
+obj/
+out/
+
+# Archivos de publicación
+*.Publish.xml
+
+# Archivos de configuración y debug
+*.log
+*.tlog
+*.cache
+*.db
+*.pid
+*.tmp
+
+# Configuración local y entornos
+*.env
+.env.*
+
+# Configuración de Rider / VSCode 
+.idea/
+.vscode/
+
+# Archivos del sistema operativo
+Thumbs.db
+.DS_Store
+
+# Archivos de docker-compose temporales
+docker-compose.override.yml

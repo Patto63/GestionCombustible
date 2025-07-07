@@ -1,0 +1,49 @@
+services:
+  db:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: auth_db
+    environment:
+      SA_PASSWORD: ${SA_PASSWORD}
+      ACCEPT_EULA: "Y"
+      MSSQL_PID: "Express"
+    ports:
+      - "1434:1433"
+    networks:
+      - auth-network
+    volumes:
+      - auth_db_data:/var/opt/mssql
+
+  auth-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: auth_service
+    environment:
+      ConnectionStrings__DefaultConnection: "Server=db,1433;Database=${DB_NAME};User Id=sa;Password=${SA_PASSWORD};TrustServerCertificate=true;Connection Timeout=30;"
+      
+      ASPNETCORE_ENVIRONMENT: ${ASPNETCORE_ENVIRONMENT}
+      ASPNETCORE_URLS: ${ASPNETCORE_URLS}
+      
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_EXPIRATION_MINUTES: ${JWT_EXPIRATION_MINUTES}
+      JWT_ISSUER: ${JWT_ISSUER}
+      JWT_AUDIENCE: ${JWT_AUDIENCE}
+      
+      BCRYPT_WORK_FACTOR: ${BCRYPT_WORK_FACTOR}
+    ports:
+      - "8081:8081"
+      - "8080:8080"
+    depends_on:
+      - db
+    networks:
+      - auth-network
+    restart: unless-stopped
+    command: >
+      sh -c "sleep 45 && dotnet AuthService.API.dll"
+
+networks:
+  auth-network:
+    driver: bridge
+
+volumes:
+  auth_db_data:
