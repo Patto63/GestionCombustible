@@ -16,5 +16,4 @@ var app = builder.Build();
 app.MapControllers();
 app.MapReverseProxy();
 app.MapGet("/", () => "API Gateway running");
-
 app.Run();

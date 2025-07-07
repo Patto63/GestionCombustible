@@ -2,6 +2,7 @@
 
 Este repositorio contiene los microservicios de autenticación y gestión de vehículos para el proyecto *GestionCombustible*. Ahora se añade un API Gateway REST que se apoya en **YARP** para exponer los servicios de forma unificada para un front-end.
 
+
 ## Microservicios existentes
 - **AuthServiceEcoF**: Servicio de autenticación (puerto 8081/8080).
 - **VehicleServiceEcoF**: Servicio de gestión de vehículos (puerto 8082).
@@ -13,6 +14,8 @@ El directorio `ApiGatewayEcoF` contiene un microservicio adicional construido co
 - `GET /auth/usuarios` listado de usuarios.
 - `POST /vehicle/cambiar-estado` cambio de estado de un vehículo.
 - `GET /vehicle/activos` listado de vehículos activos.
+
+
 
 El gateway escucha en el puerto **8085** (configurable en `docker-compose.yml`).
 
